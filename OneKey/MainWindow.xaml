@@ -1,0 +1,6 @@
+﻿<Window x:Class="OneKey.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="OneKey" Height="350" Width="525" Icon="resources/main.ico" MinWidth="525" MinHeight="350">
+    <Grid/>
+</Window>
