@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using OneKey.window;
 
 namespace OneKey
 {
@@ -23,5 +24,27 @@ namespace OneKey
         {
             InitializeComponent();
         }
+
+       
+
+     
+
+        private void MenuChgPsw_Click(object sender, RoutedEventArgs e)
+        {
+            WindowChgPsw wcp = new WindowChgPsw();
+            wcp.windowMain = this;
+            wcp.Owner = this;
+            this.IsEnabled = false;
+            wcp.Show();
+        }
+
+   
+
+        private void MenueExit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        
     }
 }
