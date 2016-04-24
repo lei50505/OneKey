@@ -61,7 +61,6 @@ namespace OneKey.src.util
                     }
                 }
             }
-
             return false;
         }
         public static string[] getByTitle(string title)
@@ -239,6 +238,10 @@ namespace OneKey.src.util
         }
         public static void addDecryptContent(string[] decryptContent,string psw)
         {
+            if (existsTitle(decryptContent[0]))
+            {
+                return;
+            }
             string[] content = new string[decryptContent.Length + 1];
             content[0] = decryptContent[0];
             content[1] = PinYinUtils.getSearchStr(decryptContent[0]);
@@ -250,5 +253,72 @@ namespace OneKey.src.util
             }
             UFile.addContent(content);
         }
+        public static void importFile(string importFilePath,string psw)
+        {
+            string[] decryptImportLines = File.ReadAllLines(importFilePath, Encoding.UTF8);
+            int decryptImportLinesLength = decryptImportLines.Length;
+            List<string> decryptContent = new List<string>();
+            for (int i = 0; i < decryptImportLinesLength; i++)
+            {
+                if (!string.IsNullOrWhiteSpace(decryptImportLines[i])) 
+                {
+                    decryptContent.Add(decryptImportLines[i]);
+                }
+                else
+                {
+                    if (decryptContent.Count >= 2)
+                    {
+                        string[] decryptContentArray = decryptContent.ToArray<String>();
+                        int tmp = 2;
+                        string title = decryptContentArray[0];
+                        while (existsTitle(decryptContentArray[0]))
+                        {
+                            decryptContentArray[0] = title + "_" + tmp.ToString();
+                            tmp++;
+                        }
+                        addDecryptContent(decryptContentArray, psw);
+                    }
+                    decryptContent = new List<string>();
+                }
+            }
+            if (decryptContent.Count >= 2)
+            {
+                string[] decryptContentArray = decryptContent.ToArray<String>();
+                int tmp = 2;
+                string title = decryptContentArray[0];
+                while (existsTitle(decryptContentArray[0]))
+                {
+                    decryptContentArray[0] =title+"_"+ tmp.ToString();
+                    tmp++;
+                }
+                addDecryptContent(decryptContentArray, psw);
+            }
+        }
+        public static void exportFile(string exportFilePath,string psw){
+            List<string> decryptLines = new List<string>();
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (string.IsNullOrWhiteSpace(lines[i]))
+                {
+                    if (i != 1)
+                    {
+                        decryptLines.Add(string.Empty);
+                    }
+                    if(i+1<lines.Length){
+                        decryptLines.Add(lines[i+1]);
+                    }
+                    for (int j = i + 3; j < lines.Length; j++)
+                    {
+                        if (string.IsNullOrWhiteSpace(lines[j]))
+                        {
+                            break;
+                        }
+                        decryptLines.Add(UAES.decryptStrToStr(lines[j], psw));
+                    }
+                }
+            }
+            File.WriteAllLines(exportFilePath, decryptLines.ToArray<string>(), Encoding.UTF8);
+        }
+
     }
 }

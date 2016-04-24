@@ -17,6 +17,8 @@ using System.Text.RegularExpressions;
 using System.Windows.Threading;
 using System.Threading;
 
+using System.Windows.Forms;
+
 namespace OneKey
 {
     /// <summary>
@@ -51,7 +53,6 @@ namespace OneKey
             loadTitlesThread.IsBackground = true;
             loadTitlesThread.Start();
         }
-
         private void txtChgTimer_Tick(object sender, EventArgs e)
         {
             if (txtChgValid == false && (loadTitlesThread == null || loadTitlesThread.ThreadState != ThreadState.Running)) 
@@ -65,8 +66,6 @@ namespace OneKey
                 setButtonDel(false);
                 setTextBoxContent("");
                 txtChgValid = true;
-                
-
             }
         }
         private delegate void setListBoxTitlesGate();
@@ -81,8 +80,7 @@ namespace OneKey
             else
             {
                 ListBoxTitles.ItemsSource =null;
-                    ListBoxTitles.ItemsSource = titles;
-                
+                ListBoxTitles.ItemsSource = titles;
             }
         }
         private delegate void setTextBoxKeyGate(string text);
@@ -206,48 +204,49 @@ namespace OneKey
         }
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
-            string text = TextBoxContent.Text;
-            string[] contentText = Regex.Split(text, Environment.NewLine);
-            if (contentText.Length < 2)
+            try
             {
-                MessageBox.Show("最少两行");
-                ButtonAdd.IsEnabled = false;
-                ButtonChg.IsEnabled = false;
-                return;
-            }
-            foreach (string s in contentText)
-            {
-                if (string.IsNullOrWhiteSpace(s))
+                string text = TextBoxContent.Text;
+                string[] contentText = Regex.Split(text, Environment.NewLine);
+                if (contentText.Length < 2)
                 {
-                    MessageBox.Show("不能有空行");
+                    System.Windows.MessageBox.Show("最少两行");
                     ButtonAdd.IsEnabled = false;
                     ButtonChg.IsEnabled = false;
                     return;
                 }
+                foreach (string s in contentText)
+                {
+                    if (string.IsNullOrWhiteSpace(s))
+                    {
+                        System.Windows.MessageBox.Show("不能有空行");
+                        ButtonAdd.IsEnabled = false;
+                        ButtonChg.IsEnabled = false;
+                        return;
+                    }
+                }
+                if (UFile.existsTitle(contentText[0]))
+                {
+                    System.Windows.MessageBox.Show("条目已存在");
+                    ButtonAdd.IsEnabled = false;
+                    return;
+                }
+                UFile.addDecryptContent(contentText, psw);
+                startLoadTitlesThread();
             }
-            if (UFile.existsTitle(contentText[0]))
+            catch (Exception ex)
             {
-                MessageBox.Show("条目已存在");
-                ButtonAdd.IsEnabled = false;
-                return;
+                TextBoxContent.Text = ex.Message;
             }
-            UFile.addDecryptContent(contentText, psw);
-            startLoadTitlesThread();
         }
-        
-
         private void TextBoxKey_TextChanged(object sender, TextChangedEventArgs e)
         {
-            
-            
             txtChgValid = false;
             ButtonAdd.IsEnabled = false;
             ButtonChg.IsEnabled = false;
             ButtonDel.IsEnabled = false;
             TextBoxContent.Text = "";
         }
-
-
         private void ButtonHide_Click(object sender, RoutedEventArgs e)
         {
             if (TextBoxContent.IsVisible)
@@ -261,7 +260,6 @@ namespace OneKey
                 ButtonHide.Content = "隐藏";
             }
         }
-
         private void ListBoxTitles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ListBoxTitles.SelectedItem != null)
@@ -287,23 +285,25 @@ namespace OneKey
                 ButtonChg.IsEnabled = false;
             }
         }
-
         private void ButtonDel_Click(object sender, RoutedEventArgs e)
         {
+            MessageBoxResult mr = System.Windows.MessageBox.Show("确定删除？", "警告", MessageBoxButton.YesNo);
+            if (mr == MessageBoxResult.No)
+            {
+                return;
+            }
             string title = ListBoxTitles.SelectedItem.ToString();
             UFile.deleteByTitle(title);
             startLoadTitlesThread();
             ButtonDel.IsEnabled = false;
-            
         }
-
         private void ButtonChg_Click(object sender, RoutedEventArgs e)
         {
             string contentText = TextBoxContent.Text;
             string[] contentLines = Regex.Split(contentText, Environment.NewLine);
             if (contentText.Length < 2)
             {
-                MessageBox.Show("最少两行");
+                System.Windows.MessageBox.Show("最少两行");
                 ButtonAdd.IsEnabled = false;
                 ButtonChg.IsEnabled = false;
                 return;
@@ -312,7 +312,7 @@ namespace OneKey
             {
                 if (string.IsNullOrWhiteSpace(s))
                 {
-                    MessageBox.Show("不能有空行");
+                    System.Windows.MessageBox.Show("不能有空行");
                     ButtonAdd.IsEnabled = false;
                     ButtonChg.IsEnabled = false;
                     return;
@@ -320,18 +320,15 @@ namespace OneKey
             }
             if(!contentLines[0].Equals(ListBoxTitles.SelectedItem.ToString()))
             {
-                MessageBox.Show("不允许修改标题");
+                System.Windows.MessageBox.Show("不允许修改标题");
                 ButtonChg.IsEnabled = false;
                 return;
             }
-
             UFile.deleteByTitle(contentLines[0]);
-
             UFile.addDecryptContent(contentLines, psw);
             ButtonChg.IsEnabled = false;
             ButtonAdd.IsEnabled = false;
         }
-
         private void TextBoxContent_TextChanged(object sender, TextChangedEventArgs e)
         {
             ButtonAdd.IsEnabled = true;
@@ -340,11 +337,32 @@ namespace OneKey
                 ButtonChg.IsEnabled = true;
             }
         }
-
-     
-
-     
-
-
+        private void MenuImportFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "文本文件|*.txt";
+            ofd.ShowDialog();
+            if (string.IsNullOrWhiteSpace(ofd.FileName))
+            {
+                return;
+            }
+            string importFilePath = ofd.FileName;
+            UFile.importFile(importFilePath, psw);
+            startLoadTitlesThread();
+            System.Windows.MessageBox.Show("导入成功");
+        }
+        private void MenuExportFile_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "文本文件|*.txt";
+            sfd.ShowDialog();
+            if (string.IsNullOrWhiteSpace(sfd.FileName))
+            {
+                return;
+            }
+            string exportFilePath = sfd.FileName;
+            UFile.exportFile(exportFilePath,psw);
+            System.Windows.MessageBox.Show("导出成功");
+        }
     }
 }

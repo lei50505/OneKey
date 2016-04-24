@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="修改密码" Height="175" Width="300" ShowInTaskbar="False" ResizeMode="NoResize" Closed="Window_Closed" Icon="/OneKey;component/resources/main.ico" WindowStartupLocation="CenterOwner" MinWidth="300" MinHeight="165">
     <Grid>
-        <Button x:Name="ButtonYes" Content="确定" Margin="0,100,10,0" VerticalAlignment="Top" Height="25" HorizontalAlignment="Right" Width="75" Click="ButtonYes_Click"/>
+        <Button x:Name="ButtonYes" Content="确定" Margin="0,100,10,0" VerticalAlignment="Top" Height="25" HorizontalAlignment="Right" Width="75" Click="ButtonYes_Click" IsDefault="True"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,14,0,0" TextWrapping="Wrap" Text="请输入旧密码" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,45,0,0" TextWrapping="Wrap" Text="请输入新密码" VerticalAlignment="Top"/>
         <PasswordBox x:Name="PswBoxOld" Margin="87,10,10,0" VerticalAlignment="Top" Height="25" VerticalContentAlignment="Center"/>

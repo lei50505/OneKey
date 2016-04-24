@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="登录" Height="114" Width="300" Closed="Window_Closed" ShowInTaskbar="False" ResizeMode="NoResize"  Icon="/OneKey;component/resources/main.ico" WindowStartupLocation="CenterOwner">
     <Grid>
-        <Button x:Name="ButtonDo" Content="确定" Margin="0,40,10,0" VerticalAlignment="Top" Height="25" Click="ButtonDo_Click" HorizontalAlignment="Right" Width="75"/>
+        <Button x:Name="ButtonDo" Content="确定" Margin="0,40,10,0" VerticalAlignment="Top" Height="25" Click="ButtonDo_Click" HorizontalAlignment="Right" Width="75" IsDefault="True"/>
         <PasswordBox x:Name="PswBox" Margin="75,10,10,0" VerticalAlignment="Top" Height="25" VerticalContentAlignment="Center"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,15,0,0" TextWrapping="Wrap" Text="请输入密码" VerticalAlignment="Top"/>
     </Grid>

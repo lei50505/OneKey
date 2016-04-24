@@ -5,6 +5,8 @@
     <Grid>
         <Menu   VerticalAlignment="Top"  >
             <MenuItem Header="菜单"  Height="20"   >
+                <MenuItem Name="MenuImportFile" Header="导入" Click="MenuImportFile_Click"/>
+                <MenuItem Name="MenuExportFile" Header="导出" Click="MenuExportFile_Click"/>
                 <MenuItem Name="MenuChgPsw" Header="修改密码" Click="MenuChgPsw_Click" />
                 <MenuItem Name="MenueExit" Header="退出" Click="MenueExit_Click" />
             </MenuItem>

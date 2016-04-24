@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 using Microsoft.International.Converters.PinYinConverter;
-
+using System.Text.RegularExpressions;
 namespace OneKey.src.util
 {
     public static class PinYinUtils
@@ -32,6 +32,11 @@ namespace OneKey.src.util
         }
         private static string[] charToFirst(char ch, ref string error)
         {
+            if (!Regex.IsMatch(ch.ToString(), @"[\u4e00-\u9fa5]"))
+            {
+                error = "Not a Chinese Char";
+                return new string[0];
+            }
             try
             {
                 HashSet<string> purePinYinSet = new HashSet<string>();
