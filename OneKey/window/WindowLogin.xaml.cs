@@ -42,7 +42,6 @@ namespace OneKey.window
             
             
         }
-
         private void ButtonDo_Click(object sender, RoutedEventArgs e)
         {
             string psw = PswBox.Password.ToString();

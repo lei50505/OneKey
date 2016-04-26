@@ -29,6 +29,9 @@ namespace OneKey
         public string psw = string.Empty;
         private DispatcherTimer txtChgTimer = new DispatcherTimer();
         private bool txtChgValid = true;
+
+        public WindowAbout windowAbout;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -46,6 +49,8 @@ namespace OneKey
             setListBoxTitles();
             setButtonAdd(false);
             setButtonChg(false);
+            setButtonDel(false);
+            setTextBoxKeyFocus();
         }
         public void startLoadTitlesThread()
         {
@@ -135,6 +140,19 @@ namespace OneKey
                 ButtonDel.IsEnabled = flag;
             }
         }
+        private delegate void setTextBoxKeyFocusGate();
+        private void setTextBoxKeyFocus()
+        {
+            if (TextBoxKey.Dispatcher.Thread != Thread.CurrentThread)
+            {
+                setTextBoxKeyFocusGate sg = new setTextBoxKeyFocusGate(setTextBoxKeyFocus);
+                Dispatcher.Invoke(sg);
+            }
+            else
+            {
+                TextBoxKey.Focus();
+            }
+        }
         private delegate void setTextBoxContentGate(string text);
         private void setTextBoxContent(string text)
         {
@@ -156,6 +174,7 @@ namespace OneKey
             windowChgPsw.Owner = this;
             this.IsEnabled = false;
             windowChgPsw.Show();
+            windowChgPsw.PswBoxOld.Focus();
         }
 
         private void MenueExit_Click(object sender, RoutedEventArgs e)
@@ -173,6 +192,7 @@ namespace OneKey
                 windowAddPsw.Owner = this;
                 this.IsEnabled = false;
                 windowAddPsw.Show();
+                windowAddPsw.PswBoxFirst.Focus();
             }
             else
             {
@@ -181,9 +201,11 @@ namespace OneKey
                 windowLogin.Owner = this;
                 this.IsEnabled = false;
                 windowLogin.Show();
+                windowLogin.PswBox.Focus();
             }
         }
         public WindowAddPsw windowAddPsw = null;
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (windowLogin != null)
@@ -201,6 +223,11 @@ namespace OneKey
                 windowChgPsw.callClose = true;
                 windowChgPsw.Close();
             }
+            if (windowAbout != null)
+            {
+                windowAbout.callClose = true;
+                windowAbout.Close();
+            }
         }
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
@@ -213,6 +240,7 @@ namespace OneKey
                     System.Windows.MessageBox.Show("最少两行");
                     ButtonAdd.IsEnabled = false;
                     ButtonChg.IsEnabled = false;
+                    TextBoxContent.Focus();
                     return;
                 }
                 foreach (string s in contentText)
@@ -222,6 +250,7 @@ namespace OneKey
                         System.Windows.MessageBox.Show("不能有空行");
                         ButtonAdd.IsEnabled = false;
                         ButtonChg.IsEnabled = false;
+                        TextBoxContent.Focus();
                         return;
                     }
                 }
@@ -229,6 +258,7 @@ namespace OneKey
                 {
                     System.Windows.MessageBox.Show("条目已存在");
                     ButtonAdd.IsEnabled = false;
+                    TextBoxContent.Focus();
                     return;
                 }
                 UFile.addDecryptContent(contentText, psw);
@@ -259,6 +289,7 @@ namespace OneKey
                 TextBoxContent.Visibility = Visibility.Visible;
                 ButtonHide.Content = "隐藏";
             }
+            TextBoxKey.Focus();
         }
         private void ListBoxTitles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -277,7 +308,14 @@ namespace OneKey
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < texts.Length; i++)
                 {
-                    sb.Append(texts[i]).Append(Environment.NewLine);
+                    if (i != texts.Length - 1)
+                    {
+                        sb.Append(texts[i]).Append(Environment.NewLine);
+                    }
+                    else
+                    {
+                        sb.Append(texts[i]);
+                    }
                 }
                 TextBoxContent.Text = sb.ToString();
                 ButtonDel.IsEnabled = true;
@@ -306,6 +344,7 @@ namespace OneKey
                 System.Windows.MessageBox.Show("最少两行");
                 ButtonAdd.IsEnabled = false;
                 ButtonChg.IsEnabled = false;
+                TextBoxContent.Focus();
                 return;
             }
             foreach (string s in contentLines)
@@ -315,6 +354,7 @@ namespace OneKey
                     System.Windows.MessageBox.Show("不能有空行");
                     ButtonAdd.IsEnabled = false;
                     ButtonChg.IsEnabled = false;
+                    TextBoxContent.Focus();
                     return;
                 }
             }
@@ -328,6 +368,7 @@ namespace OneKey
             UFile.addDecryptContent(contentLines, psw);
             ButtonChg.IsEnabled = false;
             ButtonAdd.IsEnabled = false;
+            TextBoxKey.Focus();
         }
         private void TextBoxContent_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -344,6 +385,7 @@ namespace OneKey
             ofd.ShowDialog();
             if (string.IsNullOrWhiteSpace(ofd.FileName))
             {
+                this.TextBoxKey.Focus();
                 return;
             }
             string importFilePath = ofd.FileName;
@@ -358,11 +400,45 @@ namespace OneKey
             sfd.ShowDialog();
             if (string.IsNullOrWhiteSpace(sfd.FileName))
             {
+                this.TextBoxKey.Focus();
                 return;
             }
             string exportFilePath = sfd.FileName;
             UFile.exportFile(exportFilePath,psw);
             System.Windows.MessageBox.Show("导出成功");
+            this.TextBoxKey.Focus();
+        }
+
+        private void MenuAbout_Click(object sender, RoutedEventArgs e)
+        {
+            windowAbout = new WindowAbout();
+            windowAbout.Owner = this;
+            windowAbout.mainWindow = this;
+            this.IsEnabled = false;
+            windowAbout.Show();
+        }
+
+        private void TextBoxKey_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Down)
+            {
+                if (ListBoxTitles.Items.Count != 0)
+                {
+                    setListBoxTitles();
+                    ListBoxTitles.Focus();
+                }
+            }
+        }
+
+        private void ListBoxTitles_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Up)
+            {
+                if (ListBoxTitles.SelectedIndex == 0)
+                {
+                    TextBoxKey.Focus();
+                }
+            }
         }
     }
 }

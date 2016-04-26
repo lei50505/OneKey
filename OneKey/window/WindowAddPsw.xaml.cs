@@ -19,12 +19,14 @@ namespace OneKey.window
     /// </summary>
     public partial class WindowAddPsw : Window
     {
-        public MainWindow mainWindow=null;
+        public MainWindow mainWindow;
+        public bool callClose = false;
+
         public WindowAddPsw()
         {
             InitializeComponent();
         }
-        public bool callClose = false;
+
         private void Window_Closed(object sender, EventArgs e)
         {
             if (callClose)
@@ -42,11 +44,13 @@ namespace OneKey.window
             if (string.IsNullOrWhiteSpace(psw1))
             {
                 MessageBox.Show("密码不能为空");
+                this.PswBoxFirst.Focus();
                 return;
             }
             if (!psw1.Equals(psw2))
             {
                 MessageBox.Show("两次密码不相同");
+                this.PswBoxFirst.Focus();
                 return;
             }
             string psw = UMD5.strToSaltBase64Str(psw1);
@@ -56,6 +60,7 @@ namespace OneKey.window
             this.Close();
             mainWindow.IsEnabled = true;
             mainWindow.psw = psw1;
+            mainWindow.TextBoxKey.Focus();
         }
     }
 }

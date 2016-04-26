@@ -37,6 +37,7 @@ namespace OneKey.window
             {
                 mainWindow.windowChgPsw = null;
                 mainWindow.IsEnabled = true;
+                mainWindow.TextBoxKey.Focus();
             }
 
         }
@@ -49,27 +50,30 @@ namespace OneKey.window
             if (string.IsNullOrWhiteSpace(newPsw))
             {
                 MessageBox.Show("新密码不能为空");
+                this.PswBoxOld.Focus();
                 return;
             }
             if (!newPsw.Equals(secondPsw))
             {
                 MessageBox.Show("两次输入的密码不相同");
+                this.PswBoxOld.Focus();
                 return;
             }
             string md5OldPsw = UMD5.strToSaltBase64Str(oldPsw);
             if (!UFile.validPsw(md5OldPsw))
             {
                 MessageBox.Show("旧密码不正确");
+                this.PswBoxOld.Focus();
                 return;
             }
 
             UFile.encryptAllContentAndChgPsw(oldPsw, newPsw);
-            
             this.callClose = true;
             this.Close();
             mainWindow.windowChgPsw = null;
             mainWindow.psw = newPsw;
             mainWindow.IsEnabled = true;
+            mainWindow.TextBoxKey.Focus();
         }
     }
 }

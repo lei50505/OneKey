@@ -8,12 +8,13 @@
                 <MenuItem Name="MenuImportFile" Header="导入" Click="MenuImportFile_Click"/>
                 <MenuItem Name="MenuExportFile" Header="导出" Click="MenuExportFile_Click"/>
                 <MenuItem Name="MenuChgPsw" Header="修改密码" Click="MenuChgPsw_Click" />
+                <MenuItem Name="MenuAbout" Header="关于" Click="MenuAbout_Click" />
                 <MenuItem Name="MenueExit" Header="退出" Click="MenueExit_Click" />
             </MenuItem>
 
         </Menu>
-        <TextBox x:Name="TextBoxKey" Height="25"  Margin="10,45,0,0"  VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalAlignment="Left" Width="177" TextChanged="TextBoxKey_TextChanged" />
-        <ListBox x:Name="ListBoxTitles" Margin="10,95,0,10" HorizontalAlignment="Left" Width="177" SelectionChanged="ListBoxTitles_SelectionChanged"/>
+        <TextBox x:Name="TextBoxKey" Height="25"  Margin="10,45,0,0"  VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalAlignment="Left" Width="177" TextChanged="TextBoxKey_TextChanged" PreviewKeyDown="TextBoxKey_PreviewKeyDown" />
+        <ListBox x:Name="ListBoxTitles" Margin="10,95,0,10" HorizontalAlignment="Left" Width="177" SelectionChanged="ListBoxTitles_SelectionChanged" PreviewKeyDown="ListBoxTitles_PreviewKeyDown"/>
         <TextBox x:Name="TextBoxContent" AcceptsReturn="True" Margin="192,45,10,34" TextWrapping="Wrap" TextChanged="TextBoxContent_TextChanged"/>
         <TextBlock HorizontalAlignment="Left" Margin="192,25,0,0" TextWrapping="Wrap" Text="内容" VerticalAlignment="Top"/>
         <TextBlock  Margin="10,25,0,0" Text="关键字" VerticalAlignment="Top" HorizontalAlignment="Left" Width="36"/>

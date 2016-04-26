@@ -82,6 +82,9 @@
     <Compile Include="src\util\UConvert.cs" />
     <Compile Include="src\util\UFile.cs" />
     <Compile Include="src\util\UMD5.cs" />
+    <Compile Include="window\WindowAbout.xaml.cs">
+      <DependentUpon>WindowAbout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="window\WindowAddPsw.xaml.cs">
       <DependentUpon>WindowAddPsw.xaml</DependentUpon>
     </Compile>
@@ -106,6 +109,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="window\WindowAbout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="window\WindowAddPsw.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
